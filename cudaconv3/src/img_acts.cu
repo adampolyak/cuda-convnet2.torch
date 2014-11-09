@@ -1205,7 +1205,7 @@ void _imgActs(THCudaTensor* hidActs, THCudaTensor* filters, THCudaTensor* target
     int numModulesX = numModules / numModulesY;
     
     THAssert(numImgColors % numGroups == 0);
-    THAssert(numFilters % (32*numGroups) == 0); // TODO: insisting on 32 filters due to bug in calling code below. fix that.
+    //THAssert(numFilters % (32*numGroups) == 0); // TODO: insisting on 32 filters due to bug in calling code below. fix that.
     THAssert(numGroups > 1 || (numImgColors > 0 && (numImgColors <= 3 || numImgColors % 2 == 0)));
     THAssert(numGroups == 1 || numFilterColors % 4 == 0);
 
@@ -1324,8 +1324,8 @@ void _imgActs(THCudaTensor* hidActs, THCudaTensor* filters, THCudaTensor* target
                     }
                     else if (numFilterColors % 32 == 0) {
                         if (numImages % 128 == 0) {
-                            cudaFuncSetCacheConfig(conv_img_acts_manycolor_kepler < 4, 32, 4, 8, 32, 16, false, false, true >, cudaFuncCachePreferShared);
-                            conv_img_acts_manycolor_kepler < 4, 32, 4, 8, 32, 16, false, false, true ><<<blocks, threads, 0>>>(THCudaTensor_data(hidActs), THCudaTensor_data(filters), THCudaTensor_data(targets), numModulesY, numModulesX, numImages, numFilters, filterSize, imgSizeY, imgSizeX, paddingStart, moduleStride, numImgColors, numGroups, scaleTargets, scaleOutput);
+                            cudaFuncSetCacheConfig(conv_img_acts_manycolor_kepler < 4, 32, 4, 8, 16, 16, false, false, true >, cudaFuncCachePreferShared);
+                            conv_img_acts_manycolor_kepler < 4, 32, 4, 8, 16, 16, false, false, true ><<<blocks, threads, 0>>>(THCudaTensor_data(hidActs), THCudaTensor_data(filters), THCudaTensor_data(targets), numModulesY, numModulesX, numImages, numFilters, filterSize, imgSizeY, imgSizeX, paddingStart, moduleStride, numImgColors, numGroups, scaleTargets, scaleOutput);
                         }
                         else if (numImages % 64 == 0) {
                             cudaFuncSetCacheConfig(conv_img_acts_manycolor_kepler < 4, 32, 2, 8, 32, 16, false, false, true >, cudaFuncCachePreferShared);
@@ -1858,8 +1858,8 @@ void _imgActs(THCudaTensor* hidActs, THCudaTensor* filters, THCudaTensor* target
                     }
                     else if (numFilterColors % 32 == 0) {
                         if (numImages % 128 == 0) {
-                            cudaFuncSetCacheConfig(conv_img_acts_manycolor_kepler < 4, 32, 4, 8, 32, 16, false, false, false >, cudaFuncCachePreferShared);
-                            conv_img_acts_manycolor_kepler < 4, 32, 4, 8, 32, 16, false, false, false ><<<blocks, threads, 0>>>(THCudaTensor_data(hidActs), THCudaTensor_data(filters), THCudaTensor_data(targets), numModulesY, numModulesX, numImages, numFilters, filterSize, imgSizeY, imgSizeX, paddingStart, moduleStride, numImgColors, numGroups, scaleTargets, scaleOutput);
+                            cudaFuncSetCacheConfig(conv_img_acts_manycolor_kepler < 4, 32, 4, 8, 16, 16, false, false, false >, cudaFuncCachePreferShared);
+                            conv_img_acts_manycolor_kepler < 4, 32, 4, 8, 16, 16, false, false, false ><<<blocks, threads, 0>>>(THCudaTensor_data(hidActs), THCudaTensor_data(filters), THCudaTensor_data(targets), numModulesY, numModulesX, numImages, numFilters, filterSize, imgSizeY, imgSizeX, paddingStart, moduleStride, numImgColors, numGroups, scaleTargets, scaleOutput);
                         }
                         else if (numImages % 64 == 0) {
                             cudaFuncSetCacheConfig(conv_img_acts_manycolor_kepler < 4, 32, 2, 8, 32, 16, false, false, false >, cudaFuncCachePreferShared);
