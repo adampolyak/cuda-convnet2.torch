@@ -2,7 +2,7 @@ local ffi = require 'ffi'
 
 ffi.cdef[[
 void convFilterActs(THCudaTensor* images, THCudaTensor* filters, THCudaTensor* targets,
-                    int imgSizeY, int numModulesY, int numModulesX, 
+                    int imgSizeY, int numModulesY, int numModulesX,
                     int paddingStart, int moduleStride,
                     int numImgColors, int numGroups);
 void convFilterActsSt(THCudaTensor* images, THCudaTensor* filters, THCudaTensor* targets,
@@ -49,6 +49,8 @@ void localWeightActsSt(THCudaTensor* images, THCudaTensor* hidActs, THCudaTensor
 void addBias(THCudaTensor* output, THCudaTensor* bias);
 void gradBias(THCudaTensor* output, THCudaTensor* gradBias, float scale);
 
+void addSumCols(THCudaTensor*output, THCudaTensor*input); // used for partialSum
+
 void convLocalMaxPool(THCudaTensor* images, THCudaTensor* target, int numFilters,
                       int subsX, int startX, int strideX, int outputsX);
 void convLocalMaxUndo(THCudaTensor* images, THCudaTensor* maxGrads, THCudaTensor* maxActs, THCudaTensor* target,
@@ -81,4 +83,9 @@ void convResponseNormCrossMapUndo(THCudaTensor* outGrads, THCudaTensor* inputs, 
 void convResizeBilinear(THCudaTensor* images, THCudaTensor* target, int imgSize, int tgtSize, float scale);
 ]]
 
-ccn2.C = ffi.load(package.searchpath('libccn2', package.cpath))
+local path = package.searchpath('libccn2', package.cpath)
+if not path then
+   path = require 'ccn2.config'
+end
+assert(path, 'could not find libccn2.so')
+ccn2.C = ffi.load(path)
